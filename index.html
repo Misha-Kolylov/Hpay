@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>ЖКХ Частный дом</title>
+  <style>
+    :root {
+      --bg: #0f172a; --card: #1e293b; --card-border: #334155;
+      --text: #f8fafc; --muted: #94a3b8;
+      --gazprom: #0079c2; --tatenergo: #f97316;
+      --green-bg: rgba(34, 197, 94, 0.18); --green-border: #22c55e; --green-text: #4ade80;
+      --wait-bg: rgba(234, 179, 8, 0.15); --wait-border: #eab308; --wait-text: #facc15;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); margin: 0; padding: 12px; padding-bottom: 40px; }
+    .container { max-width: 540px; margin: 0 auto; }
+    
+    /* Шапка */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .header h1 { font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .btn-icon { background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; }
+    
+    /* Выбор периода */
+    .period-bar { display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 14px; }
+    select, input { background: #0f172a; border: 1px solid var(--card-border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 16px; width: 100%; }
+    input:focus, select:focus { outline: none; border-color: #38bdf8; }
+
+    /* Карточки поставщиков */
+    .provider-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .provider-card::before { content: ""; position: absolute; top: 0; left: 0; width: 5px; height: 100%; }
+    .card-gazprom::before { background: var(--gazprom); }
+    .card-tatenergo::before { background: var(--tatenergo); }
+
+    .provider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
+    .logo-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 4px; }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .prev-hint { font-size: 12px; color: #38bdf8; margin-top: 3px; }
+
+    /* Итог внутри карточки и переключатель оплаты */
+    .calc-footer { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; margin-top: 10px; }
+    .calc-info { font-size: 13px; color: var(--muted); }
+    .calc-sum { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    
+    .pay-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--wait-border); background: var(--wait-bg); color: var(--wait-text); cursor: pointer; font-weight: 600; font-size: 13px; user-select: none; }
+    .pay-toggle.is-paid { border-color: var(--green-border); background: var(--green-bg); color: var(--green-text); }
+
+    .season-banner { background: rgba(14, 165, 233, 0.15); border: 1px dashed #0284c7; color: #7dd3fc; padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+    .btn-save { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+    .btn-save:disabled { opacity: 0.5; }
+
+    /* Журнал за год */
+    .journal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .year-total { font-size: 13px; color: var(--muted); }
+    .year-total strong { color: #fff; }
+    
+    .month-row { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+    .month-row.summer { border-left: 3px solid #0ea5e9; }
+    .month-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
+    .month-bills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    
+    .bill-pill { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--wait-border); background: var(--wait-bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.15s; }
+    .bill-pill.paid { border-color: var(--green-border); background: var(--green-bg); }
+    .bill-name { font-size: 11px; color: var(--muted); display: block; }
+    .bill-val { font-size: 14px; font-weight: 700; color: var(--text); }
+    .bill-status { font-size: 14px; }
+
+    .hidden { display: none; }
+    .settings-box { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #38bdf8; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🏡 Журнал ЖКХ</h1>
+    <div>
+      <button class="btn-icon" onclick="loadData()">🔄</button>
+      <button class="btn-icon" onclick="toggleSettings()">⚙️ Ключ</button>
+    </div>
+  </div>
+
+  <div id="settingsBox" class="settings-box hidden">
+    <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:6px;">Ключ (URL веб-приложения Apps Script):</label>
+    <input type="text" id="apiKeyInput" placeholder="https://google.com" style="margin-bottom:8px;">
+    <button class="btn-save" style="margin:0; padding:10px;" onclick="saveKey()">Сохранить ключ</button>
+  </div>
+
+  <!-- Выбор года и месяца -->
+  <div class="period-bar">
+    <select id="yearSelect" onchange="onPeriodChange()"></select>
+    <select id="monthSelect" onchange="onPeriodChange()"></select>
+  </div>
+
+  <!-- КАРТОЧКА ГАЗПРОМ -->
+  <div class="provider-card card-gazprom">
+    <div class="provider-header">
+      <div class="logo-wrap">
+        <div class="logo-badge">
+          <!-- Векторный логотип Газпром -->
+          <svg viewBox="0 0 36 36" width="24" height="24"><path fill="#0079c2" d="M18 2C13 9 11 14 11 19a7 7 0 0 0 14 0c0-5-2-10-7-17zm0 21a3 3 0 0 1-3-3c0-2 1-4 3-7 2 3 3 5 3 7a3 3 0 0 1-3 3z"/><rect x="10" y="29" width="16" height="3" rx="1.5" fill="#0079c2"/></svg>
+        </div>
+        <span>Газпром</span>
+      </div>
+      <div id="gasPayBtn" class="pay-toggle" onclick="toggleFormPay('gas')">⏳ Не оплачен</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Текущие показания (м³)</label>
+        <input type="number" id="gasReading" placeholder="0" oninput="recalc()">
+        <div class="prev-hint" id="gasPrevHint">Пред: —</div>
+      </div>
+      <div class="field">
+        <label>Тариф (₽ / м³)</label>
+        <input type="number" step="0.01" id="gasTariff" placeholder="9.28" oninput="recalc()">
+        <div class="prev-hint">Держится до смены</div>
+      </div>
+    </div>
+
+    <div class="calc-footer">
+      <div class="calc-info">Расход: <strong id="gasDiffText" style="color:#fff">0 м³</strong></div>
+      <div class="calc-sum" id="gasSumText">0.00 ₽</div>
+    </div>
+  </div>
+
+  <!-- КАРТОЧКА ТАТЭНЕРГОСБЫТ -->
+  <div class="provider-card card-tatenergo">
+    <div class="provider-header">
+      <div class="logo-wrap">
+        <div class="logo-badge">
+          <!-- Векторная эмблема Татэнергосбыт -->
+          <svg viewBox="0 0 36 36" width="24" height="24"><circle cx="18" cy="18" r="14" fill="none" stroke="#f97316" stroke-width="3"/><path fill="#0079c2" d="M19 7L10 20h7l-1 9 10-13h-7z"/></svg>
+        </div>
+        <span>Татэнергосбыт</span>
+      </div>
+      <div id="tesPayBtn" class="pay-toggle" onclick="toggleFormPay('tes')">⏳ На след. месяц</div>
+    </div>
+
+    <div id="summerBanner" class="season-banner hidden">
+      💧 <strong>Сезон полива (Май–Сентябрь):</strong> не забудьте указать начисление за полив
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Счётчик свет (кВт·ч)</label>
+        <input type="number" id="elecReading" placeholder="0" oninput="recalc()">
+        <div class="prev-hint" id="elecPrevHint">Пред: —</div>
+      </div>
+      <div class="field">
+        <label>Тариф свет (₽ / кВт)</label>
+        <input type="number" step="0.01" id="elecTariff" placeholder="4.85" oninput="recalc()">
+        <div class="prev-hint">Расход: <strong id="elecDiffText" style="color:#fff">0 кВт</strong></div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="field">
+        <label>💧 Вода (₽)</label>
+        <input type="number" step="0.01" id="waterCost" placeholder="0" oninput="recalc()">
+      </div>
+      <div class="field">
+        <label>🗑️ ТБО (₽)</label>
+        <input type="number" step="0.01" id="tboCost" placeholder="0" oninput="recalc()">
+      </div>
+      <div class="field">
+        <label>🌱 Полив (₽)</label>
+        <input type="number" step="0.01" id="wateringCost" placeholder="0" oninput="recalc()">
+      </div>
+    </div>
+
+    <div class="calc-footer">
+      <div class="calc-info">Свет: <span id="elecOnlySum">0</span> ₽ + Прочее: <span id="otherSum">0</span> ₽</div>
+      <div class="calc-sum" id="tesSumText">0.00 ₽</div>
+    </div>
+  </div>
+
+  <button class="btn-save" id="saveBtn" onclick="saveRecord()">💾 Сохранить данные за месяц</button>
+
+  <!-- ЖУРНАЛ ЗА ВЫБРАННЫЙ ГОД -->
+  <div class="journal-header">
