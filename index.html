@@ -11,21 +11,33 @@
       --bg: #0f172a; --card: #1e293b; --card-border: #334155;
       --text: #f8fafc; --muted: #94a3b8;
       --gazprom: #0079c2; --tatenergo: #f97316;
-      --green-bg: rgba(34, 197, 94, 0.18); --green-border: #22c55e; --green-text: #4ade80;
-      --wait-bg: rgba(234, 179, 8, 0.15); --wait-border: #eab308; --wait-text: #facc15;
+      
+      /* Контрастная цветовая маркировка по аналогии с заливкой в Google Таблицах */
+      --paid-bg: #16a34a;
+      --paid-border: #22c55e;
+      --paid-text: #ffffff;
+      
+      --unpaid-bg: #f8fafc;
+      --unpaid-border: #cbd5e1;
+      --unpaid-text: #0f172a;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); margin: 0; padding: 12px; padding-bottom: 40px; }
     .container { max-width: 540px; margin: 0 auto; }
     
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header h1 { font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px; }
     .btn-icon { background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; }
     
+    /* Вкладки навигации */
+    .nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: var(--card); padding: 4px; border-radius: 12px; margin-bottom: 14px; border: 1px solid var(--card-border); }
+    .nav-tab { padding: 10px; text-align: center; border-radius: 9px; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--muted); transition: 0.2s; border: none; background: transparent; }
+    .nav-tab.active { background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4); }
+
     .period-bar { display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 14px; }
     select, input { background: #0f172a; border: 1px solid var(--card-border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 16px; width: 100%; }
     input:focus, select:focus { outline: none; border-color: #38bdf8; }
-    input[readonly] { background: rgba(15, 23, 42, 0.45); color: var(--muted); border-color: #1e293b; cursor: default; }
+    input[readonly] { background: rgba(15, 23, 42, 0.5); color: #94a3b8; border-style: dashed; }
 
     .provider-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 16px; position: relative; overflow: hidden; }
     .provider-card::before { content: ""; position: absolute; top: 0; left: 0; width: 5px; height: 100%; }
@@ -34,42 +46,67 @@
 
     .provider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .logo-wrap { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
-    .logo-badge { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 3px; }
+    .logo-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 4px; }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .sub-hint { font-size: 11px; color: #38bdf8; margin-top: 3px; }
+    .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-    .calc-footer { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.7); padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(51, 65, 85, 0.6); }
-    .calc-info { font-size: 13px; color: var(--muted); line-height: 1.35; }
-    .calc-sum { font-size: 1.3rem; font-weight: 800; color: #fff; text-align: right; }
+    .calc-footer { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.65); padding: 12px; border-radius: 12px; margin-top: 10px; }
+    .calc-info { font-size: 13px; color: var(--muted); }
+    .calc-sum { font-size: 1.25rem; font-weight: 800; color: #fff; }
     
-    .pay-toggle { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--wait-border); background: var(--wait-bg); color: var(--wait-text); cursor: pointer; font-weight: 600; font-size: 13px; user-select: none; }
-    .pay-toggle.is-paid { border-color: var(--green-border); background: var(--green-bg); color: var(--green-text); }
+    /* Контрастная кнопка-индикатор статуса оплаты (как заливка ячейки в таблице) */
+    .pay-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; border: 2px solid var(--unpaid-border); background: var(--unpaid-bg); color: var(--unpaid-text); transition: 0.15s; user-select: none; }
+    .pay-status-badge.is-paid { border-color: var(--paid-border); background: var(--paid-bg); color: var(--paid-text); box-shadow: 0 2px 10px rgba(22, 163, 74, 0.35); }
 
     .season-banner { background: rgba(14, 165, 233, 0.15); border: 1px dashed #0284c7; color: #7dd3fc; padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
 
-    .btn-save { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+    .btn-save { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
     .btn-save:disabled { opacity: 0.5; }
 
-    .journal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .year-total { font-size: 13px; color: var(--muted); }
-    .year-total strong { color: #fff; }
+    /* Свернутые аккордеоны годов во вкладке Журнал */
+    .year-accordion { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+    .year-summary { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; background: rgba(30, 41, 59, 0.9); }
+    .year-summary:hover { background: rgba(51, 65, 85, 0.6); }
+    .year-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .year-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+    .year-accordion.open .year-chevron { transform: rotate(90deg); }
+    .year-meta { text-align: right; }
+    .year-sum-val { font-weight: 800; font-size: 15px; color: #fff; display: block; }
+    .year-paid-count { font-size: 11px; color: var(--muted); }
     
-    .month-row { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
-    .month-row:hover { border-color: #475569; }
-    .month-row.summer { border-left: 3px solid #0ea5e9; }
-    .month-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
-    .month-bills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    
-    .bill-pill { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--wait-border); background: var(--wait-bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.15s; }
-    .bill-pill.paid { border-color: var(--green-border); background: var(--green-bg); }
-    .bill-name { font-size: 11px; color: var(--muted); display: block; }
-    .bill-val { font-size: 14px; font-weight: 700; color: var(--text); }
-    .bill-status { font-size: 14px; }
+    .year-body { display: none; padding: 10px; border-top: 1px solid var(--card-border); background: #0f172a; }
+    .year-accordion.open .year-body { display: block; }
 
-    .hidden { display: none; }
+    /* Строки месяцев внутри раскрытого года */
+    .month-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+    .month-card.summer { border-left: 4px solid #0ea5e9; }
+    .month-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .month-name { font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .month-edit-link { font-size: 11px; color: #38bdf8; text-decoration: underline; font-weight: 400; }
+    .month-total-lbl { font-size: 12px; color: var(--muted); }
+
+    /* Ячейки счетов в журнале: чёткий контраст Белый (Не оплачен) vs Зелёный (Оплачен) */
+    .bills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cell-box { padding: 9px 10px; border-radius: 9px; border: 2px solid var(--unpaid-border); background: var(--unpaid-bg); color: var(--unpaid-text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.15s; }
+    .cell-box.is-paid { border-color: var(--paid-border); background: var(--paid-bg); color: var(--paid-text); }
+    .cell-title { font-size: 11px; font-weight: 700; opacity: 0.8; display: block; }
+    .cell-amount { font-size: 14px; font-weight: 800; }
+    .cell-tag { font-size: 10px; font-weight: 800; padding: 2px 5px; border-radius: 4px; background: rgba(0,0,0,0.12); }
+    .cell-box.is-paid .cell-tag { background: rgba(255,255,255,0.22); }
+
+    /* Модальное окно подтверждения смены статуса оплаты */
+    .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 6, 23, 0.8); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+    .modal-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; max-width: 380px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .modal-title { font-size: 1.1rem; font-weight: 800; margin: 0 0 8px 0; }
+    .modal-desc { font-size: 14px; color: var(--muted); margin: 0 0 18px 0; line-height: 1.4; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-modal { padding: 11px; border-radius: 10px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; }
+    .btn-cancel { background: #334155; color: #fff; }
+    .btn-confirm-pay { background: #16a34a; color: #fff; }
+    .btn-confirm-unpay { background: #dc2626; color: #fff; }
+
+    .hidden { display: none !important; }
     .settings-box { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #38bdf8; }
   </style>
 </head>
@@ -78,7 +115,7 @@
   <div class="header">
     <h1>🏡 Журнал ЖКХ</h1>
     <div>
-      <button class="btn-icon" onclick="loadData()">🔄</button>
+      <button class="btn-icon" onclick="loadData()" title="Обновить из таблицы">🔄</button>
       <button class="btn-icon" onclick="toggleSettings()">⚙️ Ключ</button>
     </div>
   </div>
@@ -89,124 +126,139 @@
     <button class="btn-save" style="margin:0; padding:10px;" onclick="saveKey()">Сохранить ключ</button>
   </div>
 
-  <div class="period-bar">
-    <select id="yearSelect" onchange="onPeriodChange()"></select>
-    <select id="monthSelect" onchange="onPeriodChange()"></select>
+  <!-- Навигация по вкладкам -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tabEntryBtn" onclick="switchTab('entry')">📝 Ввод показаний</button>
+    <button class="nav-tab" id="tabJournalBtn" onclick="switchTab('journal')">📚 Журнал по годам</button>
   </div>
 
-  <!-- КАРТОЧКА ГАЗПРОМ -->
-  <div class="provider-card card-gazprom">
-    <div class="provider-header">
-      <div class="logo-wrap">
-        <div class="logo-badge">
-          <svg viewBox="0 0 36 36" width="26" height="26"><path fill="#0079c2" d="M18 2C13 9 11 14 11 19a7 7 0 0 0 14 0c0-5-2-10-7-17zm0 21a3 3 0 0 1-3-3c0-2 1-4 3-7 2 3 3 5 3 7a3 3 0 0 1-3 3z"/><rect x="10" y="29" width="16" height="3" rx="1.5" fill="#0079c2"/></svg>
+  <!-- ВКЛАДКА 1: ВВОД ПОКАЗАНИЙ -->
+  <div id="viewEntry">
+    <div class="period-bar">
+      <select id="yearSelect" onchange="onPeriodChange()"></select>
+      <select id="monthSelect" onchange="onPeriodChange()"></select>
+    </div>
+
+    <!-- КАРТОЧКА ГАЗПРОМ -->
+    <div class="provider-card card-gazprom">
+      <div class="provider-header">
+        <div class="logo-wrap">
+          <div class="logo-badge">
+            <svg viewBox="0 0 36 36" width="24" height="24"><path fill="#0079c2" d="M18 2C13 9 11 14 11 19a7 7 0 0 0 14 0c0-5-2-10-7-17zm0 21a3 3 0 0 1-3-3c0-2 1-4 3-7 2 3 3 5 3 7a3 3 0 0 1-3 3z"/><rect x="10" y="29" width="16" height="3" rx="1.5" fill="#0079c2"/></svg>
+          </div>
+          <span>Газпром</span>
         </div>
-        <span>Газпром</span>
+        <div id="gasPayBtn" class="pay-status-badge" onclick="askToggleFormPay('gas')">⬜ Не оплачен</div>
       </div>
-      <div id="gasPayBtn" class="pay-toggle" onclick="toggleFormPay('gas')">⏳ Не оплачен</div>
-    </div>
 
-    <div class="grid-3">
-      <div class="field">
-        <label>Предыдущие</label>
-        <input type="number" id="gasPrevInput" readonly placeholder="0">
-      </div>
-      <div class="field">
-        <label>Текущие (м³)</label>
-        <input type="number" id="gasReading" placeholder="0" oninput="recalc()">
-      </div>
-      <div class="field">
-        <label>Тариф (₽/м³)</label>
-        <input type="number" step="0.01" id="gasTariff" placeholder="9.28" oninput="recalc()">
-      </div>
-    </div>
-
-    <div class="calc-footer">
-      <div class="calc-info">Расход: <strong id="gasDiffText" style="color:#38bdf8; font-size:15px;">0 м³</strong></div>
-      <div>
-        <div style="font-size:10px; color:var(--muted); text-align:right; text-transform:uppercase;">К оплате</div>
-        <div class="calc-sum" id="gasSumText">0.00 ₽</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- КАРТОЧКА ТАТЭНЕРГОСБЫТ -->
-  <div class="provider-card card-tatenergo">
-    <div class="provider-header">
-      <div class="logo-wrap">
-        <div class="logo-badge">
-          <!-- Векторная стилизованная иконка Татэнергосбыт (вихревые лопасти + оранжевый круг + белая Э) -->
-          <svg viewBox="0 0 100 100" width="30" height="30">
-            <g fill="#9ca3af">
-              <path d="M50 4 C68 4, 83 14, 90 29 C77 18, 61 15, 45 19 Z"/>
-              <path d="M90 27 C98 43, 96 62, 85 76 C89 60, 84 44, 72 32 Z"/>
-              <path d="M87 74 C76 89, 58 97, 40 94 C56 90, 68 78, 73 62 Z"/>
-              <path d="M42 95 C24 92, 9 79, 4 61 C15 74, 31 79, 47 77 Z"/>
-              <path d="M5 63 C-1 46, 4 27, 17 15 C11 30, 14 47, 25 60 Z"/>
-              <path d="M15 17 C28 5, 47 0, 64 6 C48 8, 34 18, 27 33 Z"/>
-            </g>
-            <circle cx="50" cy="50" r="29" fill="#f37021"/>
-            <path fill="#ffffff" d="M39 32 H61 L65 37 V63 L61 68 H39 V60 H56 V53 H42 V47 H56 V40 H39 Z"/>
-          </svg>
+      <div class="grid-3">
+        <div class="field">
+          <label>Предыдущие</label>
+          <input type="number" id="gasPrevInput" readonly tabindex="-1">
         </div>
-        <span>Татэнергосбыт</span>
+        <div class="field">
+          <label>Текущие (м³)</label>
+          <input type="number" id="gasReading" placeholder="0" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>Тариф (₽/м³)</label>
+          <input type="number" step="0.01" id="gasTariff" placeholder="9.28" oninput="recalc()">
+        </div>
       </div>
-      <div id="tesPayBtn" class="pay-toggle" onclick="toggleFormPay('tes')">⏳ Не оплачен</div>
-    </div>
 
-    <div id="summerBanner" class="season-banner hidden">
-      💧 <strong>Сезон полива (Май–Сентябрь):</strong> проверьте начисление за полив
-    </div>
-
-    <div class="grid-3">
-      <div class="field">
-        <label>Предыдущие</label>
-        <input type="number" id="elecPrevInput" readonly placeholder="0">
-      </div>
-      <div class="field">
-        <label>Текущие (кВт)</label>
-        <input type="number" id="elecReading" placeholder="0" oninput="recalc()">
-      </div>
-      <div class="field">
-        <label>Тариф (₽/кВт)</label>
-        <input type="number" step="0.01" id="elecTariff" placeholder="4.85" oninput="recalc()">
+      <div class="calc-footer">
+        <div class="calc-info">Расход: <strong id="gasDiffText" style="color:#38bdf8; font-size:15px;">0 м³</strong></div>
+        <div style="text-align:right">
+          <div style="font-size:10px; color:var(--muted); text-transform:uppercase;">К оплате</div>
+          <div class="calc-sum" id="gasSumText">0.00 ₽</div>
+        </div>
       </div>
     </div>
 
-    <div class="grid-3">
-      <div class="field">
-        <label>💧 Вода (₽)</label>
-        <input type="number" step="0.01" id="waterCost" placeholder="0" oninput="recalc()">
+    <!-- КАРТОЧКА ТАТЭНЕРГОСБЫТ -->
+    <div class="provider-card card-tatenergo">
+      <div class="provider-header">
+        <div class="logo-wrap">
+          <div class="logo-badge">
+            <svg viewBox="0 0 40 40" width="26" height="26">
+              <path d="M20 3 C29 3 35 9 36 16 C31 11 25 10 20 11 Z" fill="#94a3b8"/>
+              <path d="M37 20 C37 29 31 35 24 36 C29 31 30 25 29 20 Z" fill="#64748b"/>
+              <path d="M20 37 C11 37 5 31 4 24 C9 29 15 30 20 29 Z" fill="#94a3b8"/>
+              <path d="M3 20 C3 11 9 5 16 4 C11 9 10 15 11 20 Z" fill="#64748b"/>
+              <circle cx="20" cy="20" r="11" fill="#f97316"/>
+              <path d="M16 14 H24 V16.5 H18.5 V18.8 H23 V21.2 H18.5 V23.5 H24 V26 H16 Z" fill="#ffffff"/>
+            </svg>
+          </div>
+          <span>Татэнергосбыт</span>
+        </div>
+        <div id="tesPayBtn" class="pay-status-badge" onclick="askToggleFormPay('tes')">⬜ Не оплачен</div>
       </div>
-      <div class="field">
-        <label>🗑️ ТБО (₽)</label>
-        <input type="number" step="0.01" id="tboCost" placeholder="0" oninput="recalc()">
+
+      <div id="summerBanner" class="season-banner hidden">
+        💧 <strong>Сезон полива (Май–Сентябрь):</strong> проверьте начисление за полив
       </div>
-      <div class="field">
-        <label>🌱 Полив (₽)</label>
-        <input type="number" step="0.01" id="wateringCost" placeholder="0" oninput="recalc()">
+
+      <div class="grid-3">
+        <div class="field">
+          <label>Предыдущие</label>
+          <input type="number" id="elecPrevInput" readonly tabindex="-1">
+        </div>
+        <div class="field">
+          <label>Текущие (кВт)</label>
+          <input type="number" id="elecReading" placeholder="0" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>Тариф (₽/кВт)</label>
+          <input type="number" step="0.01" id="elecTariff" placeholder="4.85" oninput="recalc()">
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label>💧 Вода (₽)</label>
+          <input type="number" step="0.01" id="waterCost" placeholder="0" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>🗑️ ТБО (₽)</label>
+          <input type="number" step="0.01" id="tboCost" placeholder="0" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>🌱 Полив (₽)</label>
+          <input type="number" step="0.01" id="wateringCost" placeholder="0" oninput="recalc()">
+        </div>
+      </div>
+
+      <div class="calc-footer">
+        <div class="calc-info">
+          Расход: <strong id="elecDiffText" style="color:#38bdf8; font-size:15px;">0 кВт</strong><br>
+          <small>Свет: <span id="elecOnlySum">0.00</span> ₽ + Прочее: <span id="otherSum">0.00</span> ₽</small>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px; color:var(--muted); text-transform:uppercase;">К оплате</div>
+          <div class="calc-sum" id="tesSumText">0.00 ₽</div>
+        </div>
       </div>
     </div>
 
-    <div class="calc-footer">
-      <div class="calc-info">
-        Расход: <strong id="elecDiffText" style="color:#38bdf8; font-size:15px;">0 кВт</strong><br>
-        Свет: <span id="elecOnlySum">0</span> ₽ + Прочее: <span id="otherSum">0</span> ₽
-      </div>
-      <div>
-        <div style="font-size:10px; color:var(--muted); text-align:right; text-transform:uppercase;">К оплате</div>
-        <div class="calc-sum" id="tesSumText">0.00 ₽</div>
-      </div>
-    </div>
+    <button class="btn-save" id="saveBtn" onclick="saveRecord()">💾 Сохранить данные за месяц</button>
   </div>
 
-  <button class="btn-save" id="saveBtn" onclick="saveRecord()">💾 Сохранить данные за месяц</button>
-
-  <div class="journal-header">
-    <strong id="journalTitle">Журнал за 2026 год</strong>
-    <span class="year-total">Итого за год: <strong id="yearTotalSum">0 ₽</strong></span>
+  <!-- ВКЛАДКА 2: ЖУРНАЛ ПО ГОДАМ (СВЁРНУТЫЕ СПИСКИ) -->
+  <div id="viewJournal" class="hidden">
+    <div id="journalContainer">Загрузка архива...</div>
   </div>
-  <div id="journalList">Загрузка данных...</div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ ОПЛАТЫ -->
+<div id="confirmModal" class="modal-backdrop hidden">
+  <div class="modal-card">
+    <h3 class="modal-title" id="modalTitle">Подтвердите действие</h3>
+    <p class="modal-desc" id="modalDesc">Вы действительно хотите изменить статус оплаты?</p>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="btn-modal" id="modalConfirmBtn">Подтвердить</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -216,18 +268,28 @@
   let tesPaidState = false;
   let prevGas = 0;
   let prevElec = 0;
+  let openYears = new Set([new Date().getFullYear()]); // По умолчанию раскрыт только текущий год, остальные свёрнуты
+  let pendingConfirmAction = null;
 
   const now = new Date();
   const yearSel = document.getElementById('yearSelect');
   const monthSel = document.getElementById('monthSelect');
 
-  for (let y = 2023; y <= 2030; y++) {
+  for (let y = 2024; y <= 2030; y++) {
     yearSel.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y} год</option>`;
   }
   MONTHS.forEach((m, idx) => {
     const mNum = idx + 1;
     monthSel.innerHTML += `<option value="${mNum}" ${mNum === (now.getMonth() + 1) ? 'selected' : ''}>${m}</option>`;
   });
+
+  function switchTab(tab) {
+    document.getElementById('tabEntryBtn').classList.toggle('active', tab === 'entry');
+    document.getElementById('tabJournalBtn').classList.toggle('active', tab === 'journal');
+    document.getElementById('viewEntry').classList.toggle('hidden', tab !== 'entry');
+    document.getElementById('viewJournal').classList.toggle('hidden', tab !== 'journal');
+    if (tab === 'journal') renderJournalByYears();
+  }
 
   function getApiUrl() { return localStorage.getItem('gkh_dom_key') || ''; }
   function toggleSettings() {
@@ -240,26 +302,55 @@
     loadData();
   }
 
-  function toggleFormPay(type) {
-    if (type === 'gas') gasPaidState = !gasPaidState;
-    if (type === 'tes') tesPaidState = !tesPaidState;
-    updatePayButtons();
+  // Модальное окно подтверждения смены оплаты (защита от случайных нажатий)
+  function openConfirmModal(title, desc, isMakingPaid, onConfirm) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalDesc').innerText = desc;
+    const btn = document.getElementById('modalConfirmBtn');
+    btn.className = 'btn-modal ' + (isMakingPaid ? 'btn-confirm-pay' : 'btn-confirm-unpay');
+    btn.innerText = isMakingPaid ? '✅ Да, оплачено' : '⬜ Снять оплату';
+    pendingConfirmAction = onConfirm;
+    document.getElementById('confirmModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('confirmModal').classList.add('hidden');
+    pendingConfirmAction = null;
+  }
+
+  document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+    if (pendingConfirmAction) pendingConfirmAction();
+    closeModal();
+  });
+
+  function askToggleFormPay(type) {
+    const isGas = type === 'gas';
+    const currentState = isGas ? gasPaidState : tesPaidState;
+    const targetState = !currentState;
+    const serviceName = isGas ? 'Газпром' : 'Татэнергосбыт';
+    const periodName = `${MONTHS[Number(monthSel.value) - 1]} ${yearSel.value}`;
+
+    openConfirmModal(
+      targetState ? `Отметить оплату: ${serviceName}` : `Отменить оплату: ${serviceName}`,
+      targetState 
+        ? `Пометить счёт за ${periodName} зелёным как ОПЛАЧЕННЫЙ?`
+        : `Вы уверены, что хотите снять зелёную отметку оплаты за ${periodName} и вернуть статус «Не оплачен»?`,
+      targetState,
+      () => {
+        if (isGas) gasPaidState = targetState;
+        else tesPaidState = targetState;
+        updatePayButtons();
+      }
+    );
   }
 
   function updatePayButtons() {
     const gBtn = document.getElementById('gasPayBtn');
     const tBtn = document.getElementById('tesPayBtn');
-    gBtn.className = 'pay-toggle' + (gasPaidState ? ' is-paid' : '');
-    gBtn.innerText = gasPaidState ? '✅ Оплачен' : '⏳ Не оплачен';
-    tBtn.className = 'pay-toggle' + (tesPaidState ? ' is-paid' : '');
-    tBtn.innerText = tesPaidState ? '✅ Оплачен' : '⏳ Не оплачен';
-  }
-
-  function selectMonthFromList(y, m) {
-    yearSel.value = y;
-    monthSel.value = m;
-    onPeriodChange();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    gBtn.className = 'pay-status-badge' + (gasPaidState ? ' is-paid' : '');
+    gBtn.innerText = gasPaidState ? '✅ Оплачен' : '⬜ Не оплачен';
+    tBtn.className = 'pay-status-badge' + (tesPaidState ? ' is-paid' : '');
+    tBtn.innerText = tesPaidState ? '✅ Оплачен' : '⬜ Не оплачен';
   }
 
   function onPeriodChange() {
@@ -292,31 +383,29 @@
     if (currentRecord) {
       document.getElementById('gasReading').value = currentRecord.Газ_Показ || '';
       document.getElementById('elecReading').value = currentRecord.Свет_Показ || '';
-      document.getElementById('waterCost').value = currentRecord.Вода !== undefined && currentRecord.Вода !== '' ? currentRecord.Вода : '';
-      document.getElementById('tboCost').value = currentRecord.ТБО !== undefined && currentRecord.ТБО !== '' ? currentRecord.ТБО : '';
-      document.getElementById('wateringCost').value = currentRecord.Полив !== undefined && currentRecord.Полив !== '' ? currentRecord.Полив : '';
+      document.getElementById('waterCost').value = currentRecord.Вода !== undefined ? currentRecord.Вода : '';
+      document.getElementById('tboCost').value = currentRecord.ТБО !== undefined ? currentRecord.ТБО : '';
+      document.getElementById('wateringCost').value = currentRecord.Полив !== undefined ? currentRecord.Полив : '';
       gasPaidState = currentRecord.Газ_Оплата === 'Да';
       tesPaidState = currentRecord.ТЭС_Оплата === 'Да';
     } else {
-      // Новый месяц: показания пустые, а Вода, ТБО и Полив подтягиваются с прошлого месяца!
       document.getElementById('gasReading').value = '';
       document.getElementById('elecReading').value = '';
-      document.getElementById('waterCost').value = (lastPrev && lastPrev.Вода !== undefined) ? lastPrev.Вода : '';
-      document.getElementById('tboCost').value = (lastPrev && lastPrev.ТБО !== undefined) ? lastPrev.ТБО : '';
-      document.getElementById('wateringCost').value = (lastPrev && lastPrev.Полив !== undefined) ? lastPrev.Полив : '';
+      document.getElementById('waterCost').value = lastPrev && lastPrev.Вода ? lastPrev.Вода : '';
+      document.getElementById('tboCost').value = lastPrev && lastPrev.ТБО ? lastPrev.ТБО : '';
+      document.getElementById('wateringCost').value = lastPrev && lastPrev.Полив ? lastPrev.Полив : '';
       gasPaidState = false;
       tesPaidState = false;
     }
 
     updatePayButtons();
     recalc();
-    renderJournal();
   }
 
   function recalc() {
     const gRead = Number(document.getElementById('gasReading').value) || 0;
     const gTar = Number(document.getElementById('gasTariff').value) || 0;
-    const gDiff = (gRead > prevGas && prevGas > 0) ? (gRead - prevGas) : 0;
+    const gDiff = (gRead >= prevGas && prevGas > 0) ? (gRead - prevGas) : 0;
     const gSum = gDiff * gTar;
 
     document.getElementById('gasDiffText').innerText = `${gDiff} м³`;
@@ -324,7 +413,7 @@
 
     const eRead = Number(document.getElementById('elecReading').value) || 0;
     const eTar = Number(document.getElementById('elecTariff').value) || 0;
-    const eDiff = (eRead > prevElec && prevElec > 0) ? (eRead - prevElec) : 0;
+    const eDiff = (eRead >= prevElec && prevElec > 0) ? (eRead - prevElec) : 0;
     const eSum = eDiff * eTar;
 
     const water = Number(document.getElementById('waterCost').value) || 0;
@@ -343,93 +432,155 @@
 
   async function loadData() {
     const url = getApiUrl();
-    const listDiv = document.getElementById('journalList');
+    const container = document.getElementById('journalContainer');
     if (!url) {
-      listDiv.innerHTML = 'Нажмите «⚙️ Ключ» вверху и вставьте ссылку на ваш Apps Script.';
+      container.innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px;">Нажмите «⚙️ Ключ» вверху и вставьте ссылку на ваш Apps Script.</div>';
       onPeriodChange();
       return;
     }
-    listDiv.innerHTML = 'Синхронизация с таблицей...';
+    container.innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px;">Синхронизация с Google Таблицей...</div>';
     try {
       const res = await fetch(url);
       allRows = await res.json();
       onPeriodChange();
+      renderJournalByYears();
     } catch (e) {
-      listDiv.innerHTML = 'Ошибка загрузки. Проверьте ключ.';
+      container.innerHTML = '<div style="color:#f87171; text-align:center; padding:20px;">Ошибка загрузки. Проверьте ключ.</div>';
     }
   }
 
-  function renderJournal() {
-    const y = Number(yearSel.value);
-    document.getElementById('journalTitle').innerText = `Журнал за ${y} год`;
-    const listDiv = document.getElementById('journalList');
+  function toggleYearAccordion(year) {
+    if (openYears.has(year)) openYears.delete(year);
+    else openYears.add(year);
+    renderJournalByYears();
+  }
 
-    const yearRows = allRows.filter(r => Number(r.Год) === y).sort((a, b) => Number(a.Месяц) - Number(b.Месяц));
-    let totalYear = 0;
+  function openMonthInEditor(year, month) {
+    yearSel.value = year;
+    monthSel.value = month;
+    onPeriodChange();
+    switchTab('entry');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-    if (!yearRows.length) {
-      listDiv.innerHTML = '<div style="color:var(--muted); font-size:14px;">За этот год записей пока нет.</div>';
-      document.getElementById('yearTotalSum').innerText = '0 ₽';
+  function renderJournalByYears() {
+    const container = document.getElementById('journalContainer');
+    // Исключаем базовую техническую строку 2023 года из визуального списка
+    const visibleRows = allRows.filter(r => Number(r.Год) >= 2024);
+
+    if (!visibleRows.length) {
+      container.innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px;">В базе пока нет записей за 2024–2026 годы.</div>';
       return;
     }
 
-    listDiv.innerHTML = yearRows.map(r => {
-      const mIdx = Number(r.Месяц) - 1;
-      const isSummer = Number(r.Месяц) >= 5 && Number(r.Месяц) <= 9;
-      const gSum = Number(r.Газ_Сумма) || 0;
-      const tSum = (Number(r.Свет_Сумма) || 0) + (Number(r.Вода) || 0) + (Number(r.ТБО) || 0) + (Number(r.Полив) || 0);
-      totalYear += (gSum + tSum);
+    // Группируем по годам от новых к старым
+    const years = [...new Set(visibleRows.map(r => Number(r.Год)))].sort((a, b) => b - a);
 
-      const gPaid = r.Газ_Оплата === 'Да';
-      const tPaid = r.ТЭС_Оплата === 'Да';
+    container.innerHTML = years.map(y => {
+      const yRows = visibleRows.filter(r => Number(r.Год) === y).sort((a, b) => Number(a.Месяц) - Number(b.Месяц));
+      let yearSum = 0;
+      let paidBillsCount = 0;
+      const totalBillsCount = yRows.length * 2;
+
+      const monthsHtml = yRows.map(r => {
+        const mNum = Number(r.Месяц);
+        const isSummer = mNum >= 5 && mNum <= 9;
+        const gSum = Number(r.Газ_Сумма) || 0;
+        const tSum = (Number(r.Свет_Сумма) || 0) + (Number(r.Вода) || 0) + (Number(r.ТБО) || 0) + (Number(r.Полив) || 0);
+        yearSum += (gSum + tSum);
+
+        const gPaid = r.Газ_Оплата === 'Да';
+        const tPaid = r.ТЭС_Оплата === 'Да';
+        if (gPaid) paidBillsCount++;
+        if (tPaid) paidBillsCount++;
+
+        return `
+          <div class="month-card ${isSummer ? 'summer' : ''}">
+            <div class="month-head">
+              <div class="month-name" onclick="openMonthInEditor(${y}, ${mNum})">
+                <span>${MONTHS[mNum - 1]} ${isSummer ? '💧' : ''}</span>
+                <span class="month-edit-link">изменить</span>
+              </div>
+              <span class="month-total-lbl">Итого: <strong style="color:#fff">${(gSum + tSum).toFixed(2)} ₽</strong></span>
+            </div>
+            <div class="bills-grid">
+              <div class="cell-box ${gPaid ? 'is-paid' : ''}" onclick="askQuickToggle(${y}, ${mNum}, 'gas', ${!gPaid})">
+                <div>
+                  <span class="cell-title">ГАЗ (${r.Газ_Расход} м³)</span>
+                  <span class="cell-amount">${gSum.toFixed(2)} ₽</span>
+                </div>
+                <span class="cell-tag">${gPaid ? 'ОПЛАЧЕН' : 'НЕ ОПЛ.'}</span>
+              </div>
+              <div class="cell-box ${tPaid ? 'is-paid' : ''}" onclick="askQuickToggle(${y}, ${mNum}, 'tes', ${!tPaid})">
+                <div>
+                  <span class="cell-title">ТЭС (${r.Свет_Расход} кВт)</span>
+                  <span class="cell-amount">${tSum.toFixed(2)} ₽</span>
+                </div>
+                <span class="cell-tag">${tPaid ? 'ОПЛАЧЕН' : 'НЕ ОПЛ.'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const isOpen = openYears.has(y);
+      const allPaidYear = paidBillsCount === totalBillsCount;
 
       return `
-        <div class="month-row ${isSummer ? 'summer' : ''}" onclick="selectMonthFromList(${y}, ${r.Месяц})">
-          <div class="month-top">
-            <span>${MONTHS[mIdx]} ${isSummer ? '💧' : ''}</span>
-            <span style="font-size:13px; color:var(--muted)">Всего: ${(gSum + tSum).toFixed(2)} ₽</span>
-          </div>
-          <div class="month-bills">
-            <div class="bill-pill ${gPaid ? 'paid' : ''}" onclick="event.stopPropagation(); quickToggle(${y}, ${r.Месяц}, 'gas', '${gPaid ? 'Нет' : 'Да'}')">
+        <div class="year-accordion ${isOpen ? 'open' : ''}">
+          <div class="year-summary" onclick="toggleYearAccordion(${y})">
+            <div class="year-title-wrap">
+              <span class="year-chevron">▶</span>
               <div>
-                <span class="bill-name">Газ (${r.Газ_Расход} м³)</span>
-                <span class="bill-val">${gSum.toFixed(2)} ₽</span>
+                <strong style="font-size:16px;">${y} год</strong>
+                <div style="font-size:11px; color:${allPaidYear ? '#4ade80' : '#94a3b8'}">
+                  ${allPaidYear ? '✅ Все счета оплачены' : `Оплачено счетов: ${paidBillsCount} из ${totalBillsCount}`}
+                </div>
               </div>
-              <span class="bill-status">${gPaid ? '✅' : '⏳'}</span>
             </div>
-            <div class="bill-pill ${tPaid ? 'paid' : ''}" onclick="event.stopPropagation(); quickToggle(${y}, ${r.Месяц}, 'tes', '${tPaid ? 'Нет' : 'Да'}')">
-              <div>
-                <span class="bill-name">ТЭС (${r.Свет_Расход} кВт + проч.)</span>
-                <span class="bill-val">${tSum.toFixed(2)} ₽</span>
-              </div>
-              <span class="bill-status">${tPaid ? '✅' : '⏳'}</span>
+            <div class="year-meta">
+              <span class="year-sum-val">${yearSum.toFixed(2)} ₽</span>
+              <span class="year-paid-count">${isOpen ? 'Свернуть' : 'Развернуть'}</span>
             </div>
           </div>
+          <div class="year-body">${monthsHtml}</div>
         </div>
       `;
     }).join('');
-
-    document.getElementById('yearTotalSum').innerText = `${totalYear.toFixed(2)} ₽`;
   }
 
-  async function quickToggle(year, month, service, newValue) {
-    const url = getApiUrl();
-    if (!url) return;
-    const target = allRows.find(r => Number(r.Год) === year && Number(r.Месяц) === month);
-    if (target) {
-      if (service === 'gas') target.Газ_Оплата = newValue;
-      else target.ТЭС_Оплата = newValue;
-      renderJournal();
-      if (Number(yearSel.value) === year && Number(monthSel.value) === month) {
-        gasPaidState = target.Газ_Оплата === 'Да';
-        tesPaidState = target.ТЭС_Оплата === 'Да';
-        updatePayButtons();
+  // Подтверждение при клике на ячейку в журнале
+  function askQuickToggle(year, month, service, makePaid) {
+    const serviceName = service === 'gas' ? 'Газпром' : 'Татэнергосбыт';
+    const periodName = `${MONTHS[month - 1]} ${year}`;
+    const newValueStr = makePaid ? 'Да' : 'Нет';
+
+    openConfirmModal(
+      makePaid ? `Подтвердить оплату: ${serviceName}` : `Снять статус оплаты: ${serviceName}`,
+      makePaid
+        ? `Закрасить ячейку «${serviceName}» за ${periodName} зелёным цветом и сохранить оплату в таблицу?`
+        : `Вы уверены, что хотите вернуть белый фон (Не оплачен) для «${serviceName}» за ${periodName}?`,
+      makePaid,
+      async () => {
+        const url = getApiUrl();
+        if (!url) return;
+        const target = allRows.find(r => Number(r.Год) === year && Number(r.Месяц) === month);
+        if (target) {
+          if (service === 'gas') target.Газ_Оплата = newValueStr;
+          else target.ТЭС_Оплата = newValueStr;
+          renderJournalByYears();
+          if (Number(yearSel.value) === year && Number(monthSel.value) === month) {
+            gasPaidState = target.Газ_Оплата === 'Да';
+            tesPaidState = target.ТЭС_Оплата === 'Да';
+            updatePayButtons();
+          }
+        }
+        await fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'toggleStatus', year, month, service, value: newValueStr })
+        });
       }
-    }
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'toggleStatus', year, month, service, value: newValue })
-    });
+    );
   }
 
   async function saveRecord() {
