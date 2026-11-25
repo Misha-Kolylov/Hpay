@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
   <title>ЖКХ Частный дом</title>
   <style>
     :root {
@@ -16,61 +17,43 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); margin: 0; padding: 12px; padding-bottom: 40px; }
     .container { max-width: 540px; margin: 0 auto; }
-    
-    /* Шапка */
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .header h1 { font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px; }
     .btn-icon { background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; }
-    
-    /* Выбор периода */
     .period-bar { display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 14px; }
     select, input { background: #0f172a; border: 1px solid var(--card-border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 16px; width: 100%; }
     input:focus, select:focus { outline: none; border-color: #38bdf8; }
-
-    /* Карточки поставщиков */
     .provider-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 16px; position: relative; overflow: hidden; }
     .provider-card::before { content: ""; position: absolute; top: 0; left: 0; width: 5px; height: 100%; }
     .card-gazprom::before { background: var(--gazprom); }
     .card-tatenergo::before { background: var(--tatenergo); }
-
     .provider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .logo-wrap { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
     .logo-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 4px; }
-    
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .prev-hint { font-size: 12px; color: #38bdf8; margin-top: 3px; }
-
-    /* Итог внутри карточки и переключатель оплаты */
     .calc-footer { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; margin-top: 10px; }
     .calc-info { font-size: 13px; color: var(--muted); }
     .calc-sum { font-size: 1.25rem; font-weight: 800; color: #fff; }
-    
     .pay-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--wait-border); background: var(--wait-bg); color: var(--wait-text); cursor: pointer; font-weight: 600; font-size: 13px; user-select: none; }
     .pay-toggle.is-paid { border-color: var(--green-border); background: var(--green-bg); color: var(--green-text); }
-
     .season-banner { background: rgba(14, 165, 233, 0.15); border: 1px dashed #0284c7; color: #7dd3fc; padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-
     .btn-save { width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
     .btn-save:disabled { opacity: 0.5; }
-
-    /* Журнал за год */
     .journal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .year-total { font-size: 13px; color: var(--muted); }
     .year-total strong { color: #fff; }
-    
     .month-row { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
     .month-row.summer { border-left: 3px solid #0ea5e9; }
     .month-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
     .month-bills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    
     .bill-pill { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--wait-border); background: var(--wait-bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.15s; }
     .bill-pill.paid { border-color: var(--green-border); background: var(--green-bg); }
     .bill-name { font-size: 11px; color: var(--muted); display: block; }
     .bill-val { font-size: 14px; font-weight: 700; color: var(--text); }
     .bill-status { font-size: 14px; }
-
     .hidden { display: none; }
     .settings-box { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #38bdf8; }
   </style>
@@ -87,22 +70,19 @@
 
   <div id="settingsBox" class="settings-box hidden">
     <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:6px;">Ключ (URL веб-приложения Apps Script):</label>
-    <input type="text" id="apiKeyInput" placeholder="https://google.com" style="margin-bottom:8px;">
+    <input type="text" id="apiKeyInput" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:8px;">
     <button class="btn-save" style="margin:0; padding:10px;" onclick="saveKey()">Сохранить ключ</button>
   </div>
 
-  <!-- Выбор года и месяца -->
   <div class="period-bar">
     <select id="yearSelect" onchange="onPeriodChange()"></select>
     <select id="monthSelect" onchange="onPeriodChange()"></select>
   </div>
 
-  <!-- КАРТОЧКА ГАЗПРОМ -->
   <div class="provider-card card-gazprom">
     <div class="provider-header">
       <div class="logo-wrap">
         <div class="logo-badge">
-          <!-- Векторный логотип Газпром -->
           <svg viewBox="0 0 36 36" width="24" height="24"><path fill="#0079c2" d="M18 2C13 9 11 14 11 19a7 7 0 0 0 14 0c0-5-2-10-7-17zm0 21a3 3 0 0 1-3-3c0-2 1-4 3-7 2 3 3 5 3 7a3 3 0 0 1-3 3z"/><rect x="10" y="29" width="16" height="3" rx="1.5" fill="#0079c2"/></svg>
         </div>
         <span>Газпром</span>
@@ -129,12 +109,10 @@
     </div>
   </div>
 
-  <!-- КАРТОЧКА ТАТЭНЕРГОСБЫТ -->
   <div class="provider-card card-tatenergo">
     <div class="provider-header">
       <div class="logo-wrap">
         <div class="logo-badge">
-          <!-- Векторная эмблема Татэнергосбыт -->
           <svg viewBox="0 0 36 36" width="24" height="24"><circle cx="18" cy="18" r="14" fill="none" stroke="#f97316" stroke-width="3"/><path fill="#0079c2" d="M19 7L10 20h7l-1 9 10-13h-7z"/></svg>
         </div>
         <span>Татэнергосбыт</span>
@@ -182,5 +160,270 @@
 
   <button class="btn-save" id="saveBtn" onclick="saveRecord()">💾 Сохранить данные за месяц</button>
 
-  <!-- ЖУРНАЛ ЗА ВЫБРАННЫЙ ГОД -->
   <div class="journal-header">
+    <strong id="journalTitle">Журнал за 2026 год</strong>
+    <span class="year-total">Итого за год: <strong id="yearTotalSum">0 ₽</strong></span>
+  </div>
+  <div id="journalList">Загрузка данных...</div>
+</div>
+
+<script>
+  const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  let allRows = [];
+  let gasPaidState = false;
+  let tesPaidState = false;
+  let prevGas = 0;
+  let prevElec = 0;
+
+  const now = new Date();
+  const yearSel = document.getElementById('yearSelect');
+  const monthSel = document.getElementById('monthSelect');
+
+  for (let y = 2024; y <= 2030; y++) {
+    yearSel.innerHTML += `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y} год</option>`;
+  }
+  MONTHS.forEach((m, idx) => {
+    const mNum = idx + 1;
+    monthSel.innerHTML += `<option value="${mNum}" ${mNum === (now.getMonth() + 1) ? 'selected' : ''}>${m}</option>`;
+  });
+
+  function getApiUrl() { return localStorage.getItem('gkh_dom_key') || ''; }
+  function toggleSettings() {
+    document.getElementById('settingsBox').classList.toggle('hidden');
+    document.getElementById('apiKeyInput').value = getApiUrl();
+  }
+  function saveKey() {
+    localStorage.setItem('gkh_dom_key', document.getElementById('apiKeyInput').value.trim());
+    toggleSettings();
+    loadData();
+  }
+
+  function toggleFormPay(type) {
+    if (type === 'gas') gasPaidState = !gasPaidState;
+    if (type === 'tes') tesPaidState = !tesPaidState;
+    updatePayButtons();
+  }
+
+  function updatePayButtons() {
+    const gBtn = document.getElementById('gasPayBtn');
+    const tBtn = document.getElementById('tesPayBtn');
+    gBtn.className = 'pay-toggle' + (gasPaidState ? ' is-paid' : '');
+    gBtn.innerText = gasPaidState ? '✅ Оплачен' : '⏳ Не оплачен';
+    tBtn.className = 'pay-toggle' + (tesPaidState ? ' is-paid' : '');
+    tBtn.innerText = tesPaidState ? '✅ Оплачен' : '⏳ На след. месяц';
+  }
+
+  function onPeriodChange() {
+    const y = Number(yearSel.value);
+    const m = Number(monthSel.value);
+    
+    const banner = document.getElementById('summerBanner');
+    if (m >= 5 && m <= 9) banner.classList.remove('hidden');
+    else banner.classList.add('hidden');
+
+    const sorted = [...allRows].sort((a, b) => (a.Год * 100 + a.Месяц) - (b.Год * 100 + b.Месяц));
+    const curKey = y * 100 + m;
+
+    const currentRecord = sorted.find(r => Number(r.Год) === y && Number(r.Месяц) === m);
+    const prevRecords = sorted.filter(r => (Number(r.Год) * 100 + Number(r.Месяц)) < curKey);
+    const lastPrev = prevRecords.length ? prevRecords[prevRecords.length - 1] : null;
+
+    prevGas = lastPrev ? Number(lastPrev.Газ_Показ) : 0;
+    prevElec = lastPrev ? Number(lastPrev.Свет_Показ) : 0;
+
+    document.getElementById('gasPrevHint').innerText = `Пред: ${prevGas || '—'}`;
+    document.getElementById('elecPrevHint').innerText = `Пред: ${prevElec || '—'}`;
+
+    const savedGasTariff = (currentRecord && currentRecord.Газ_Тариф) || (lastPrev && lastPrev.Газ_Тариф) || localStorage.getItem('last_gas_tariff') || '';
+    const savedElecTariff = (currentRecord && currentRecord.Свет_Тариф) || (lastPrev && lastPrev.Свет_Тариф) || localStorage.getItem('last_elec_tariff') || '';
+
+    document.getElementById('gasTariff').value = savedGasTariff;
+    document.getElementById('elecTariff').value = savedElecTariff;
+
+    if (currentRecord) {
+      document.getElementById('gasReading').value = currentRecord.Газ_Показ || '';
+      document.getElementById('elecReading').value = currentRecord.Свет_Показ || '';
+      document.getElementById('waterCost').value = currentRecord.Вода || '';
+      document.getElementById('tboCost').value = currentRecord.ТБО || '';
+      document.getElementById('wateringCost').value = currentRecord.Полив || '';
+      gasPaidState = currentRecord.Газ_Оплата === 'Да';
+      tesPaidState = currentRecord.ТЭС_Оплата === 'Да';
+    } else {
+      document.getElementById('gasReading').value = '';
+      document.getElementById('elecReading').value = '';
+      document.getElementById('waterCost').value = '';
+      document.getElementById('tboCost').value = '';
+      document.getElementById('wateringCost').value = '';
+      gasPaidState = false;
+      tesPaidState = false;
+    }
+
+    updatePayButtons();
+    recalc();
+    renderJournal();
+  }
+
+  function recalc() {
+    const gRead = Number(document.getElementById('gasReading').value) || 0;
+    const gTar = Number(document.getElementById('gasTariff').value) || 0;
+    const gDiff = (gRead > prevGas && prevGas > 0) ? (gRead - prevGas) : 0;
+    const gSum = gDiff * gTar;
+
+    document.getElementById('gasDiffText').innerText = `${gDiff} м³`;
+    document.getElementById('gasSumText').innerText = `${gSum.toFixed(2)} ₽`;
+
+    const eRead = Number(document.getElementById('elecReading').value) || 0;
+    const eTar = Number(document.getElementById('elecTariff').value) || 0;
+    const eDiff = (eRead > prevElec && prevElec > 0) ? (eRead - prevElec) : 0;
+    const eSum = eDiff * eTar;
+
+    const water = Number(document.getElementById('waterCost').value) || 0;
+    const tbo = Number(document.getElementById('tboCost').value) || 0;
+    const watering = Number(document.getElementById('wateringCost').value) || 0;
+    const other = water + tbo + watering;
+    const tesTotal = eSum + other;
+
+    document.getElementById('elecDiffText').innerText = `${eDiff} кВт`;
+    document.getElementById('elecOnlySum').innerText = eSum.toFixed(0);
+    document.getElementById('otherSum').innerText = other.toFixed(0);
+    document.getElementById('tesSumText').innerText = `${tesTotal.toFixed(2)} ₽`;
+
+    return { gRead, gDiff, gTar, gSum, eRead, eDiff, eTar, eSum, water, tbo, watering, tesTotal };
+  }
+
+  async function loadData() {
+    const url = getApiUrl();
+    const listDiv = document.getElementById('journalList');
+    if (!url) {
+      listDiv.innerHTML = 'Нажмите «⚙️ Ключ» вверху и вставьте ссылку на ваш Apps Script.';
+      onPeriodChange();
+      return;
+    }
+    listDiv.innerHTML = 'Синхронизация с таблицей...';
+    try {
+      const res = await fetch(url);
+      allRows = await res.json();
+      onPeriodChange();
+    } catch (e) {
+      listDiv.innerHTML = 'Ошибка загрузки. Проверьте ключ.';
+    }
+  }
+
+  function renderJournal() {
+    const y = Number(yearSel.value);
+    document.getElementById('journalTitle').innerText = `Журнал за ${y} год`;
+    const listDiv = document.getElementById('journalList');
+
+    const yearRows = allRows.filter(r => Number(r.Год) === y).sort((a, b) => Number(a.Месяц) - Number(b.Месяц));
+    let totalYear = 0;
+
+    if (!yearRows.length) {
+      listDiv.innerHTML = '<div style="color:var(--muted); font-size:14px;">За этот год записей пока нет.</div>';
+      document.getElementById('yearTotalSum').innerText = '0 ₽';
+      return;
+    }
+
+    listDiv.innerHTML = yearRows.map(r => {
+      const mIdx = Number(r.Месяц) - 1;
+      const isSummer = Number(r.Месяц) >= 5 && Number(r.Месяц) <= 9;
+      const gSum = Number(r.Газ_Сумма) || 0;
+      const tSum = (Number(r.Свет_Сумма) || 0) + (Number(r.Вода) || 0) + (Number(r.ТБО) || 0) + (Number(r.Полив) || 0);
+      totalYear += (gSum + tSum);
+
+      const gPaid = r.Газ_Оплата === 'Да';
+      const tPaid = r.ТЭС_Оплата === 'Да';
+
+      return `
+        <div class="month-row ${isSummer ? 'summer' : ''}">
+          <div class="month-top">
+            <span>${MONTHS[mIdx]} ${isSummer ? '💧' : ''}</span>
+            <span style="font-size:13px; color:var(--muted)">Всего: ${(gSum + tSum).toFixed(0)} ₽</span>
+          </div>
+          <div class="month-bills">
+            <div class="bill-pill ${gPaid ? 'paid' : ''}" onclick="quickToggle(${y}, ${r.Месяц}, 'gas', '${gPaid ? 'Нет' : 'Да'}')">
+              <div>
+                <span class="bill-name">Газ (${r.Газ_Расход} м³)</span>
+                <span class="bill-val">${gSum.toFixed(0)} ₽</span>
+              </div>
+              <span class="bill-status">${gPaid ? '✅' : '⏳'}</span>
+            </div>
+            <div class="bill-pill ${tPaid ? 'paid' : ''}" onclick="quickToggle(${y}, ${r.Месяц}, 'tes', '${tPaid ? 'Нет' : 'Да'}')">
+              <div>
+                <span class="bill-name">ТЭС (${r.Свет_Расход} кВт + проч.)</span>
+                <span class="bill-val">${tSum.toFixed(0)} ₽</span>
+              </div>
+              <span class="bill-status">${tPaid ? '✅' : '⏳'}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('yearTotalSum').innerText = `${totalYear.toFixed(2)} ₽`;
+  }
+
+  async function quickToggle(year, month, service, newValue) {
+    const url = getApiUrl();
+    if (!url) return;
+    const target = allRows.find(r => Number(r.Год) === year && Number(r.Месяц) === month);
+    if (target) {
+      if (service === 'gas') target.Газ_Оплата = newValue;
+      else target.ТЭС_Оплата = newValue;
+      renderJournal();
+      if (Number(yearSel.value) === year && Number(monthSel.value) === month) {
+        gasPaidState = target.Газ_Оплата === 'Да';
+        tesPaidState = target.ТЭС_Оплата === 'Да';
+        updatePayButtons();
+      }
+    }
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'toggleStatus', year, month, service, value: newValue })
+    });
+  }
+
+  async function saveRecord() {
+    const url = getApiUrl();
+    if (!url) return alert('Сначала вставьте Ключ в настройках!');
+    
+    const c = recalc();
+    if (c.gTar) localStorage.setItem('last_gas_tariff', c.gTar);
+    if (c.eTar) localStorage.setItem('last_elec_tariff', c.eTar);
+
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.innerText = 'Сохранение...';
+
+    const payload = {
+      year: yearSel.value,
+      month: monthSel.value,
+      gasReading: c.gRead,
+      gasDiff: c.gDiff,
+      gasTariff: c.gTar,
+      gasSum: c.gSum.toFixed(2),
+      gasPaid: gasPaidState,
+      elecReading: c.eRead,
+      elecDiff: c.eDiff,
+      elecTariff: c.eTar,
+      elecSum: c.eSum.toFixed(2),
+      water: c.water,
+      tbo: c.tbo,
+      watering: c.watering,
+      tesPaid: tesPaidState
+    };
+
+    try {
+      await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+      await loadData();
+    } catch (e) {
+      alert('Ошибка при сохранении');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Сохранить данные за месяц';
+    }
+  }
+
+  loadData();
+</script>
+</body>
+</html>
